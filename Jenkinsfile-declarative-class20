@@ -1,0 +1,37 @@
+pipeline{
+
+    agent any
+    tools {
+
+        maven "maven3.9.2"
+    }
+
+    stages {
+        stage('clonefromsourcecode'){
+            steps{
+                sh "echo 'clone latest code from github'"
+                sh "echo 'build  developing for dev environment '"
+                git 'https://github.com/WilsonFemiLionTech/liontech-web-app-jenkins-cicd'
+            }
+        }
+
+        stage('Test+build+package'){
+            steps{
+
+            
+                sh   "clean package"
+            }
+        }
+        
+
+        stage('deploy to tomcat'){
+            steps{
+                deploy adapters: [tomcat9(credentialsId: '281a6134-9683-4bd6-939b-a0e8f5845b5a', path: '', url: 'http://localhost:8009')], contextPath: 'welcome', onFailure: false, war: 'target/*.war'
+                
+            }
+        }
+
+
+    }
+
+}
